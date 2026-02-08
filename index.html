@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מפת מיחזור סוללות - ישראל</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🔋 מפת מיחזור סוללות</h1>
+    </header>
+
+    <!-- Controls Panel -->
+    <div class="controls">
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="חיפוש לפי עיר...">
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">הכל</button>
+            <button class="filter-btn" data-filter="store">🟢 נקודות איסוף</button>
+            <button class="filter-btn" data-filter="facility">🔴 מתקני מיחזור</button>
+        </div>
+
+        <!-- Find Nearest Button -->
+        <button id="find-nearest" class="nearest-btn">📍 מצא הקרוב אליי</button>
+    </div>
+
+    <!-- The map -->
+    <div id="map"></div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Our JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

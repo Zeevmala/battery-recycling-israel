@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Debug/temp files
+raw_markers.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code local settings
+.claude/
