@@ -66,6 +66,27 @@ let allMarkers = [];
 let userMarker = null;
 let userLocation = null;
 
+// Marker cluster group
+const markerCluster = L.markerClusterGroup({
+    chunkedLoading: true,
+    maxClusterRadius: 50,
+    spiderfyOnMaxZoom: true,
+    showCoverageOnHover: false,
+    iconCreateFunction: function(cluster) {
+        const count = cluster.getChildCount();
+        let size = 'small';
+        if (count > 100) size = 'large';
+        else if (count > 20) size = 'medium';
+
+        return L.divIcon({
+            html: `<div><span>${count}</span></div>`,
+            className: `marker-cluster marker-cluster-${size}`,
+            iconSize: L.point(40, 40)
+        });
+    }
+});
+map.addLayer(markerCluster);
+
 // Current filter state
 let currentFilter = 'all';
 let currentSearch = '';
@@ -144,6 +165,7 @@ function createPopupContent(location) {
 // Update which markers are visible based on filters
 function updateMarkers() {
     let visibleCount = 0;
+    const visibleMarkers = [];
 
     allMarkers.forEach((item, index) => {
         const location = allLocations[index];
@@ -160,14 +182,16 @@ function updateMarkers() {
             location.name.includes(currentSearch) ||
             location.address.includes(currentSearch);
 
-        // Show or hide marker
+        // Collect visible markers
         if (filterMatch && cityMatch && searchMatch) {
-            item.marker.addTo(map);
+            visibleMarkers.push(item.marker);
             visibleCount++;
-        } else {
-            map.removeLayer(item.marker);
         }
     });
+
+    // Update cluster with visible markers
+    markerCluster.clearLayers();
+    markerCluster.addLayers(visibleMarkers);
 
     // Update count display
     const countEl = document.getElementById('location-count');
@@ -207,12 +231,11 @@ fetch('locations.json')
     .then(data => {
         allLocations = data.locations;
 
-        // Create markers for all locations
+        // Create markers for all locations (don't add to map yet - updateMarkers handles that)
         allLocations.forEach(location => {
             const icon = icons[location.type] || icons.store;
             const marker = L.marker([location.lat, location.lng], { icon: icon });
             marker.bindPopup(createPopupContent(location));
-            marker.addTo(map);
 
             allMarkers.push({ marker, location });
         });
