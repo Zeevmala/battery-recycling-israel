@@ -85,6 +85,17 @@ function createPopupContent(location) {
         content += `<p class="distance">📍 מרחק: ${distance.toFixed(1)} ק"מ</p>`;
     }
 
+    // Add navigation links
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}`;
+    const wazeUrl = `https://waze.com/ul?ll=${location.lat},${location.lng}&navigate=yes`;
+
+    content += `
+        <div class="nav-links">
+            <a href="${googleMapsUrl}" target="_blank" class="nav-btn google">Google Maps</a>
+            <a href="${wazeUrl}" target="_blank" class="nav-btn waze">Waze</a>
+        </div>
+    `;
+
     return content;
 }
 

@@ -129,6 +129,43 @@ header h1 {
     font-weight: bold;
 }
 
+/* Navigation links in popup */
+.nav-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 8px 12px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.nav-btn.google {
+    background-color: #4285f4;
+    color: white;
+}
+
+.nav-btn.google:hover {
+    background-color: #3367d6;
+}
+
+.nav-btn.waze {
+    background-color: #33ccff;
+    color: white;
+}
+
+.nav-btn.waze:hover {
+    background-color: #00b3e6;
+}
+
 /* Mobile Responsive */
 @media (max-width: 600px) {
     header h1 {
