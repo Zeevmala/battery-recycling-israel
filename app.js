@@ -1,10 +1,30 @@
 // Initialize the map centered on Israel
 const map = L.map('map').setView([31.5, 34.9], 8);
 
-// Add map tiles from OpenStreetMap
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+// Define multiple basemap options
+const baseMaps = {
+    'רחובות': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }),
+    'בהיר': L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© CartoDB'
+    }),
+    'כהה': L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© CartoDB'
+    }),
+    'לוויין': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '© Esri'
+    }),
+    'טופוגרפי': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenTopoMap'
+    })
+};
+
+// Add default basemap
+baseMaps['רחובות'].addTo(map);
+
+// Add layer control
+L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
 
 // Define marker icons for different location types
 const icons = {
