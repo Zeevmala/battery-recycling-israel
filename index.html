@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="מפת נקודות מיחזור סוללות בישראל - מצא את הנקודה הקרובה אליך">
-    <meta name="theme-color" content="#2e7d32">
+    <meta name="theme-color" content="#1565C0">
     <title>מפת מיחזור סוללות - ישראל</title>
 
     <!-- PWA Manifest -->
@@ -51,91 +51,83 @@
 
     <!-- Header -->
     <header role="banner">
-        <h1>🔋 מפת מיחזור סוללות</h1>
+        <h1>מפת מיחזור סוללות</h1>
+
+        <!-- Search Box in Header -->
+        <div class="header-search">
+            <label for="search-input" class="visually-hidden">חיפוש נקודות מיחזור</label>
+            <input type="text" id="search-input" placeholder="חיפוש..." autocomplete="off" aria-describedby="search-hint">
+            <div id="search-suggestions" class="search-suggestions" role="listbox" aria-label="הצעות חיפוש"></div>
+            <span id="search-hint" class="visually-hidden">הקלד לחיפוש, יופיעו הצעות אוטומטיות</span>
+        </div>
+
         <div class="header-actions">
-            <button id="theme-toggle" class="theme-toggle-btn" aria-label="החלף מצב תצוגה בהיר/כהה" title="מצב כהה/בהיר">
+            <!-- Find Nearest Button -->
+            <button id="find-nearest" class="header-btn nearest-btn" aria-label="מצא את נקודת המיחזור הקרובה למיקום שלי" title="מצא הקרוב אליי">
+                <span aria-hidden="true">📍</span>
+            </button>
+
+            <!-- Menu Toggle Button -->
+            <button id="menu-toggle" class="header-btn menu-toggle-btn" aria-label="פתח תפריט" aria-expanded="false" aria-controls="dropdown-menu">
+                <span class="menu-icon" aria-hidden="true">☰</span>
+            </button>
+
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" class="header-btn theme-toggle-btn" aria-label="החלף מצב תצוגה בהיר/כהה" title="מצב כהה/בהיר">
                 <span class="theme-icon-light" aria-hidden="true">🌙</span>
                 <span class="theme-icon-dark" aria-hidden="true">☀️</span>
             </button>
+
             <button id="install-btn" class="install-btn" style="display: none;" aria-label="התקן אפליקציה">
                 <span aria-hidden="true">📲</span> התקן
             </button>
         </div>
     </header>
 
-    <!-- Controls Panel -->
-    <div class="controls" role="search" aria-label="חיפוש וסינון נקודות מיחזור">
-        <!-- Search Box with Autocomplete -->
-        <div class="search-box">
-            <label for="search-input" class="visually-hidden">חיפוש נקודות מיחזור</label>
-            <input type="text" id="search-input" placeholder="חיפוש עיר או נקודה..." autocomplete="off" aria-describedby="search-hint">
-            <div id="search-suggestions" class="search-suggestions" role="listbox" aria-label="הצעות חיפוש"></div>
-            <span id="search-hint" class="visually-hidden">הקלד לחיפוש, יופיעו הצעות אוטומטיות</span>
+    <!-- Dropdown Menu -->
+    <div id="dropdown-menu" class="dropdown-menu" role="menu" aria-label="תפריט סינון" style="display: none;">
+        <!-- City Filter -->
+        <div class="menu-section">
+            <label for="city-filter" class="menu-label">עיר</label>
+            <select id="city-filter" class="city-select" aria-label="בחר עיר לסינון">
+                <option value="all">כל הערים</option>
+            </select>
         </div>
 
-        <!-- City Filter -->
-        <label for="city-filter" class="visually-hidden">סינון לפי עיר</label>
-        <select id="city-filter" class="city-select" aria-label="בחר עיר לסינון">
-            <option value="all">כל הערים</option>
-        </select>
-
-        <!-- Chain Filter -->
-        <label for="chain-filter" class="visually-hidden">סינון לפי רשת</label>
-        <select id="chain-filter" class="chain-select" aria-label="בחר רשת לסינון">
-            <option value="all">כל הרשתות</option>
-            <option value="superpharm">סופר פארם</option>
-            <option value="shufersal">שופרסל</option>
-            <option value="rami_levy">רמי לוי</option>
-            <option value="victory">ויקטורי</option>
-            <option value="home_center">הום סנטר</option>
-            <option value="office_depot">אופיס דיפו</option>
-            <option value="ikea">איקאה</option>
-            <option value="pelephone">פלאפון</option>
-            <option value="cellcom">סלקום</option>
-            <option value="partner">פרטנר</option>
-            <option value="big_electric">ביג אלקטריק</option>
-            <option value="municipality">עירייה/מועצה</option>
-            <option value="school">בית ספר</option>
-            <option value="other">אחר</option>
-        </select>
-
         <!-- Filter Buttons -->
-        <div class="filters" role="group" aria-label="סינון לפי סוג נקודה">
-            <button class="filter-btn active" data-filter="all" aria-pressed="true">הכל</button>
-            <button class="filter-btn" data-filter="store" aria-pressed="false">🟢 נקודות איסוף</button>
-            <button class="filter-btn" data-filter="facility" aria-pressed="false">🔴 מתקני מיחזור</button>
+        <div class="menu-section">
+            <span class="menu-label">סוג</span>
+            <div class="filters" role="group" aria-label="סינון לפי סוג נקודה">
+                <button class="filter-btn active" data-filter="all" aria-pressed="true">הכל</button>
+                <button class="filter-btn" data-filter="store" aria-pressed="false">🟢 נקודות איסוף</button>
+                <button class="filter-btn" data-filter="facility" aria-pressed="false">🔴 מתקני מיחזור</button>
+            </div>
         </div>
 
         <!-- Favorites Filter -->
-        <button id="favorites-filter" class="favorites-filter-btn" aria-pressed="false" aria-label="הצג מועדפים בלבד">
-            <span aria-hidden="true">❤️</span> מועדפים
-        </button>
-
-        <!-- Find Nearest Button -->
-        <button id="find-nearest" class="nearest-btn" aria-label="מצא את נקודת המיחזור הקרובה למיקום שלי">
-            <span aria-hidden="true">📍</span> מצא הקרוב אליי
-        </button>
-
-        <!-- Radius Search -->
-        <div class="radius-control">
-            <label for="radius-slider" class="visually-hidden">טווח חיפוש בקילומטרים</label>
-            <span class="radius-label" aria-hidden="true">טווח:</span>
-            <input type="range" id="radius-slider" min="1" max="50" value="50" aria-valuemin="1" aria-valuemax="50" aria-valuenow="50">
-            <span id="radius-value" class="radius-value">ללא הגבלה</span>
+        <div class="menu-section">
+            <button id="favorites-filter" class="favorites-filter-btn" aria-pressed="false" aria-label="הצג מועדפים בלבד">
+                <span aria-hidden="true">❤️</span> מועדפים
+            </button>
         </div>
 
         <!-- View Toggle -->
-        <div class="view-toggle" role="tablist" aria-label="בחר תצוגה">
-            <button id="map-view-btn" class="view-btn active" role="tab" aria-selected="true" aria-controls="map">
-                <span aria-hidden="true">🗺️</span> מפה
-            </button>
-            <button id="list-view-btn" class="view-btn" role="tab" aria-selected="false" aria-controls="list-view">
-                <span aria-hidden="true">📋</span> רשימה
-            </button>
+        <div class="menu-section">
+            <span class="menu-label">תצוגה</span>
+            <div class="view-toggle" role="tablist" aria-label="בחר תצוגה">
+                <button id="map-view-btn" class="view-btn active" role="tab" aria-selected="true" aria-controls="map">
+                    <span aria-hidden="true">🗺️</span> מפה
+                </button>
+                <button id="list-view-btn" class="view-btn" role="tab" aria-selected="false" aria-controls="list-view">
+                    <span aria-hidden="true">📋</span> רשימה
+                </button>
+            </div>
         </div>
 
         <!-- Location Count -->
-        <span id="location-count" class="count-badge" role="status" aria-live="polite">0 נקודות</span>
+        <div class="menu-section menu-count">
+            <span id="location-count" class="count-badge" role="status" aria-live="polite">0 נקודות</span>
+        </div>
     </div>
 
     <!-- Main Content Container -->
@@ -164,9 +156,6 @@
             <div id="sidebar-content" class="sidebar-content"></div>
         </aside>
     </main>
-
-    <!-- Radius Circle Info -->
-    <div id="radius-info" class="radius-info" style="display: none;" aria-live="polite"></div>
 
     <!-- Notification for favorites -->
     <div id="notification" class="notification" role="alert" aria-live="assertive" style="display: none;"></div>
