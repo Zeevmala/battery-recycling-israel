@@ -19,13 +19,6 @@ An interactive map showing **~3,900 battery recycling locations** across Israel 
 - **Accessible** — Keyboard navigation, ARIA labels, screen reader support
 - **Mobile Friendly** — Responsive design with bottom drawer sidebar on small screens
 
-## Location Types
-
-| Marker | Type | Examples |
-|--------|------|----------|
-| 🟢 | Collection Points | Superpharm, Shufersal, Home Center, Pelephone, Cellcom |
-| 🔴 | Recycling Facilities | Batte-Re (Dimona), RE-CAR (Arad), MILI |
-
 ## Tech Stack
 
 | | |
