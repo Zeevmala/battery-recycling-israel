@@ -33,6 +33,9 @@ HTML, CSS, JavaScript + Leaflet.js for maps
 ## TODO
 - [ ] Create Google Form for "Report a problem" and replace placeholder URL in `app.js` (`REPORT_FORM_URL`)
 
+## Nice to Have
+- [ ] Add `aria-label` to Leaflet marker/cluster divs (e.g. location name) — framework generates `role="button"` divs without accessible names
+
 ## File Structure
 | File | Purpose |
 |------|---------|

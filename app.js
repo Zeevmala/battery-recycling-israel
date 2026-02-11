@@ -33,6 +33,41 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
+// === FUZZY SEARCH ===
+// Returns true if query approximately matches any substring of text
+// with at most maxDist character differences (insertions, deletions, substitutions)
+function fuzzyMatch(text, query, maxDist = 2) {
+    if (!text || !query) return false;
+    if (text.includes(query)) return true;
+    if (query.length <= 2) return false; // too short for fuzzy
+
+    // Sliding window Levenshtein: check if any substring of text
+    // of length ~query.length is within maxDist edits
+    const qLen = query.length;
+    const tLen = text.length;
+
+    // Initialize DP row — allow free start position in text
+    let prev = new Array(qLen + 1);
+    for (let j = 0; j <= qLen; j++) prev[j] = j;
+
+    for (let i = 1; i <= tLen; i++) {
+        const curr = new Array(qLen + 1);
+        curr[0] = 0; // free start position
+        for (let j = 1; j <= qLen; j++) {
+            const cost = text[i - 1] === query[j - 1] ? 0 : 1;
+            curr[j] = Math.min(
+                prev[j] + 1,      // deletion
+                curr[j - 1] + 1,  // insertion
+                prev[j - 1] + cost // substitution
+            );
+        }
+        // Check if we found a good enough match ending here
+        if (curr[qLen] <= maxDist) return true;
+        prev = curr;
+    }
+    return false;
+}
+
 // === MAP INITIALIZATION ===
 const map = L.map('map').setView([31.5, 34.9], 7);
 
@@ -99,55 +134,70 @@ searchControl.onAdd = function() {
 };
 searchControl.addTo(map);
 
-// Custom SVG Battery Icons - Simplified pin style
-const batterySvg = {
-    store: `<svg viewBox="0 0 32 44" width="32" height="44">
+// Custom SVG Marker Icons — rounded Google-style pins
+const markerSvg = {
+    store: `<svg viewBox="0 0 36 48" width="36" height="48" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <linearGradient id="storeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#4CAF50"/>
-                <stop offset="100%" style="stop-color:#2E7D32"/>
+                <stop offset="0%" stop-color="#26A69A"/>
+                <stop offset="100%" stop-color="#00796B"/>
             </linearGradient>
-            <filter id="storeShadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+            <filter id="storeShadow" x="-25%" y="-15%" width="150%" height="150%">
+                <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity="0.25"/>
             </filter>
         </defs>
-        <path d="M16 0C8 0 2 6 2 14C2 24 16 44 16 44S30 24 30 14C30 6 24 0 16 0Z" fill="url(#storeGrad)" filter="url(#storeShadow)"/>
-        <circle cx="16" cy="14" r="8" fill="white" opacity="0.95"/>
-        <rect x="13" y="9" width="6" height="2" rx="1" fill="#2E7D32"/>
-        <rect x="11" y="11" width="10" height="8" rx="1" fill="#4CAF50"/>
-        <rect x="12" y="12" width="8" height="2" rx="0.5" fill="#81C784"/>
-        <rect x="12" y="15" width="8" height="2" rx="0.5" fill="#A5D6A7"/>
+        <path d="M18 1C9.7 1 3 7.7 3 16c0 10.5 15 30 15 30s15-19.5 15-30C33 7.7 26.3 1 18 1z" fill="url(#storeGrad)" filter="url(#storeShadow)"/>
+        <circle cx="18" cy="15" r="9" fill="white" opacity="0.95"/>
+        <rect x="15" y="9.5" width="6" height="2" rx="1" fill="#00796B"/>
+        <rect x="13" y="11.5" width="10" height="7" rx="1.5" fill="#26A69A"/>
+        <rect x="14.5" y="13" width="7" height="1.5" rx="0.5" fill="#80CBC4"/>
+        <rect x="14.5" y="15.5" width="7" height="1.5" rx="0.5" fill="#B2DFDB"/>
     </svg>`,
-    user: `<svg viewBox="0 0 32 44" width="32" height="44">
+    facility: `<svg viewBox="0 0 36 48" width="36" height="48" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="facilityGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#FFA726"/>
+                <stop offset="100%" stop-color="#EF6C00"/>
+            </linearGradient>
+            <filter id="facilityShadow" x="-25%" y="-15%" width="150%" height="150%">
+                <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity="0.25"/>
+            </filter>
+        </defs>
+        <path d="M18 1C9.7 1 3 7.7 3 16c0 10.5 15 30 15 30s15-19.5 15-30C33 7.7 26.3 1 18 1z" fill="url(#facilityGrad)" filter="url(#facilityShadow)"/>
+        <circle cx="18" cy="15" r="9" fill="white" opacity="0.95"/>
+        <path d="M13 18v-5l3.5 2.5L20 13v5h-1.5v-3l-2 1.5L14.5 15v3z" fill="#EF6C00"/>
+        <rect x="14" y="10" width="8" height="1.5" rx="0.5" fill="#FFA726"/>
+    </svg>`,
+    user: `<svg viewBox="0 0 36 48" width="36" height="48" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <linearGradient id="userGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#42A5F5"/>
-                <stop offset="100%" style="stop-color:#1565C0"/>
+                <stop offset="0%" stop-color="#42A5F5"/>
+                <stop offset="100%" stop-color="#1565C0"/>
             </linearGradient>
-            <filter id="userShadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+            <filter id="userShadow" x="-25%" y="-15%" width="150%" height="150%">
+                <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity="0.25"/>
             </filter>
         </defs>
-        <circle cx="16" cy="14" r="12" fill="url(#userGrad)" filter="url(#userShadow)" stroke="white" stroke-width="3"/>
-        <circle cx="16" cy="14" r="5" fill="white"/>
-        <circle cx="16" cy="14" r="2" fill="#1565C0"/>
+        <circle cx="18" cy="16" r="13" fill="url(#userGrad)" filter="url(#userShadow)" stroke="white" stroke-width="3"/>
+        <circle cx="18" cy="16" r="5" fill="white"/>
+        <circle cx="18" cy="16" r="2" fill="#1565C0"/>
     </svg>`
 };
 
-function createBatteryIcon(type) {
+function createMarkerIcon(type) {
     return L.divIcon({
-        html: batterySvg[type],
+        html: markerSvg[type],
         className: 'battery-marker',
-        iconSize: [32, 44],
-        iconAnchor: [16, 44],
-        popupAnchor: [0, -44]
+        iconSize: [36, 48],
+        iconAnchor: [18, 48],
+        popupAnchor: [0, -48]
     });
 }
 
 const icons = {
-    store: createBatteryIcon('store'),
-    facility: createBatteryIcon('store'),
-    user: createBatteryIcon('user')
+    store: createMarkerIcon('store'),
+    facility: createMarkerIcon('facility'),
+    user: createMarkerIcon('user')
 };
 
 // Hebrew names for types
@@ -257,7 +307,7 @@ function getReportUrl(location) {
 
 // Create popup content for a location
 function createPopupContent(location) {
-    const typeIcon = batterySvg.store.replace('width="32" height="44"', 'width="20" height="28"');
+    const typeIcon = markerSvg[location.type].replace('width="36" height="48"', 'width="20" height="28"');
 
     let content = `
         <div class="popup-header">
@@ -270,11 +320,15 @@ function createPopupContent(location) {
             <span class="icon">📍</span>
             <span>${escapeHtml(location.address)}</span>
         </div>
+    `;
+
+    if (location.hours) {
+        content += `
         <div class="popup-row">
             <span class="icon">🕐</span>
-            <span>${escapeHtml(location.hours || 'לא צוין')}</span>
-        </div>
-    `;
+            <span>${escapeHtml(location.hours)}</span>
+        </div>`;
+    }
 
     if (location.description) {
         content += `
@@ -314,7 +368,7 @@ function createPopupContent(location) {
 
 // Create sidebar content for a location
 function createSidebarContent(location) {
-    const typeIcon = batterySvg.store.replace('width="32" height="44"', 'width="36" height="50"');
+    const typeIcon = markerSvg[location.type].replace('width="36" height="48"', 'width="36" height="50"');
     const chain = detectChain(location.name);
     const chainName = chainNames[chain] || '';
 
@@ -353,10 +407,12 @@ function createSidebarContent(location) {
                 <span class="info-icon">🏙️</span>
                 <span class="info-text">${escapeHtml(location.city)}</span>
             </div>
+            ${location.hours ? `
             <div class="info-row">
                 <span class="info-icon">🕐</span>
-                <span class="info-text">${escapeHtml(location.hours || 'לא צוין')}</span>
+                <span class="info-text">${escapeHtml(location.hours)}</span>
             </div>
+            ` : ''}
             ${location.description ? `
             <div class="info-row">
                 <span class="info-icon">ℹ️</span>
@@ -419,7 +475,10 @@ function updateMarkers() {
         const searchMatch = currentSearch === '' ||
             location.city.includes(currentSearch) ||
             location.name.includes(currentSearch) ||
-            location.address.includes(currentSearch);
+            location.address.includes(currentSearch) ||
+            fuzzyMatch(location.city, currentSearch) ||
+            fuzzyMatch(location.name, currentSearch) ||
+            fuzzyMatch(location.address, currentSearch);
 
         if (searchMatch) {
             visibleMarkers.push(item.marker);
@@ -500,7 +559,9 @@ function setupAutocomplete() {
 
         allLocations.forEach(location => {
             if (location.name.includes(query) ||
-                location.address.includes(query)) {
+                location.address.includes(query) ||
+                fuzzyMatch(location.name, query) ||
+                fuzzyMatch(location.address, query)) {
                 matches.push({
                     type: 'location',
                     id: location.id,
@@ -510,7 +571,7 @@ function setupAutocomplete() {
                 });
             }
 
-            if (location.city.includes(query) && !addedCities.has(location.city)) {
+            if ((location.city.includes(query) || fuzzyMatch(location.city, query)) && !addedCities.has(location.city)) {
                 addedCities.add(location.city);
                 matches.unshift({
                     type: 'city',
@@ -644,19 +705,49 @@ function focusOnLocation(locationId) {
 window.focusOnLocation = focusOnLocation;
 
 // === GPS GEOLOCATION ===
-const locateControl = L.control({ position: 'bottomleft' });
-locateControl.onAdd = function() {
-    const btn = L.DomUtil.create('button', 'locate-btn');
-    btn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+const locateIconSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
         <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
     </svg>`;
+const extentIconSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 3v2M12 19v2M3 12h2M19 12h2"/>
+        <path d="M12 8v8M8 12h8"/>
+    </svg>`;
+
+let gpsActive = false;
+
+const locateControl = L.control({ position: 'bottomleft' });
+locateControl.onAdd = function() {
+    const btn = L.DomUtil.create('button', 'locate-btn');
+    btn.innerHTML = locateIconSvg;
     btn.title = 'מצא את מיקומי';
     btn.setAttribute('aria-label', 'מצא את מיקומי');
 
     L.DomEvent.disableClickPropagation(btn);
 
     btn.onclick = function() {
+        // Toggle: if GPS is active, zoom to full extent
+        if (gpsActive) {
+            gpsActive = false;
+            btn.classList.remove('active');
+            btn.innerHTML = locateIconSvg;
+            btn.title = 'מצא את מיקומי';
+            btn.setAttribute('aria-label', 'מצא את מיקומי');
+
+            // Remove user marker
+            if (userMarker) {
+                map.removeLayer(userMarker);
+                userMarker = null;
+            }
+            userLocation = null;
+
+            map.flyTo([31.5, 34.9], 7, { duration: 0.8 });
+            showNotification('תצוגה מלאה');
+            return;
+        }
+
+        // Find my location
         if (!navigator.geolocation) {
             showNotification('הדפדפן לא תומך באיתור מיקום');
             return;
@@ -684,6 +775,13 @@ locateControl.onAdd = function() {
 
                 map.flyTo([lat, lng], 14, { duration: 0.8 });
                 showNotification('מיקום נמצא');
+
+                // Switch to "full extent" mode
+                gpsActive = true;
+                btn.classList.add('active');
+                btn.innerHTML = extentIconSvg;
+                btn.title = 'הצג מפה מלאה';
+                btn.setAttribute('aria-label', 'הצג מפה מלאה');
             },
             (error) => {
                 btn.classList.remove('loading');
@@ -797,6 +895,45 @@ loadLocations();
 const sidebarClose = document.getElementById('sidebar-close');
 if (sidebarClose) {
     sidebarClose.addEventListener('click', hideSidebar);
+}
+
+// Sidebar swipe-to-close on mobile
+const sidebarEl = document.getElementById('sidebar');
+if (sidebarEl) {
+    let touchStartY = 0;
+    let touchCurrentY = 0;
+    let isSwiping = false;
+
+    sidebarEl.addEventListener('touchstart', (e) => {
+        if (window.innerWidth > 768) return;
+        touchStartY = e.touches[0].clientY;
+        isSwiping = true;
+        sidebarEl.style.transition = 'none';
+    }, { passive: true });
+
+    sidebarEl.addEventListener('touchmove', (e) => {
+        if (!isSwiping) return;
+        touchCurrentY = e.touches[0].clientY;
+        const deltaY = touchCurrentY - touchStartY;
+        // Only allow swipe down (positive delta)
+        if (deltaY > 0) {
+            sidebarEl.style.transform = `translateY(${deltaY}px)`;
+        }
+    }, { passive: true });
+
+    sidebarEl.addEventListener('touchend', () => {
+        if (!isSwiping) return;
+        isSwiping = false;
+        sidebarEl.style.transition = '';
+        const deltaY = touchCurrentY - touchStartY;
+        if (deltaY > 80) {
+            hideSidebar();
+        } else {
+            sidebarEl.style.transform = '';
+        }
+        touchStartY = 0;
+        touchCurrentY = 0;
+    });
 }
 
 // Clear filters / empty state / retry

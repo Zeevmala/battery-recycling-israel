@@ -78,15 +78,15 @@ body {
     flex: 1;
     height: 100%;
     width: 100%;
-    cursor: default;
+    cursor: crosshair;
 }
 
 #map.leaflet-container {
-    cursor: grab;
+    cursor: crosshair;
 }
 
 #map.leaflet-container:active {
-    cursor: grabbing;
+    cursor: crosshair;
 }
 
 /* Map Search Control */
@@ -245,6 +245,12 @@ body {
     outline-offset: 2px;
 }
 
+.locate-btn.active {
+    background: #00796B;
+    color: white;
+    border-color: #00796B;
+}
+
 .locate-btn.loading {
     color: var(--accent-primary);
     animation: pulse 1s ease-in-out infinite;
@@ -278,27 +284,27 @@ body {
 }
 
 .marker-cluster-small {
-    background-color: rgba(21, 101, 192, 0.6);
+    background-color: rgba(92, 107, 192, 0.5);
 }
 
 .marker-cluster-small div {
-    background-color: rgba(21, 101, 192, 0.9);
+    background-color: rgba(92, 107, 192, 0.9);
 }
 
 .marker-cluster-medium {
-    background-color: rgba(255, 152, 0, 0.6);
+    background-color: rgba(126, 87, 194, 0.5);
 }
 
 .marker-cluster-medium div {
-    background-color: rgba(255, 152, 0, 0.9);
+    background-color: rgba(126, 87, 194, 0.9);
 }
 
 .marker-cluster-large {
-    background-color: rgba(211, 47, 47, 0.6);
+    background-color: rgba(106, 27, 154, 0.5);
 }
 
 .marker-cluster-large div {
-    background-color: rgba(211, 47, 47, 0.9);
+    background-color: rgba(106, 27, 154, 0.9);
 }
 
 /* Custom Battery Markers */
