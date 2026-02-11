@@ -114,20 +114,6 @@ const batterySvg = {
         <rect x="12" y="12" width="8" height="2" rx="0.5" fill="#81C784"/>
         <rect x="12" y="15" width="8" height="2" rx="0.5" fill="#A5D6A7"/>
     </svg>`,
-    facility: `<svg viewBox="0 0 32 44" width="32" height="44">
-        <defs>
-            <linearGradient id="facilityGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#EF5350"/>
-                <stop offset="100%" style="stop-color:#C62828"/>
-            </linearGradient>
-            <filter id="facilityShadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
-            </filter>
-        </defs>
-        <path d="M16 0C8 0 2 6 2 14C2 24 16 44 16 44S30 24 30 14C30 6 24 0 16 0Z" fill="url(#facilityGrad)" filter="url(#facilityShadow)"/>
-        <circle cx="16" cy="14" r="8" fill="white" opacity="0.95"/>
-        <path d="M16 7L18 12H16.5L17 20L13 12H14.5L14 7Z" fill="#C62828" transform="translate(0, 1)"/>
-    </svg>`,
     user: `<svg viewBox="0 0 32 44" width="32" height="44">
         <defs>
             <linearGradient id="userGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -156,7 +142,7 @@ function createBatteryIcon(type) {
 
 const icons = {
     store: createBatteryIcon('store'),
-    facility: createBatteryIcon('facility'),
+    facility: createBatteryIcon('store'),
     user: createBatteryIcon('user')
 };
 
@@ -257,8 +243,7 @@ function getDistance(lat1, lng1, lat2, lng2) {
 
 // Create popup content for a location
 function createPopupContent(location) {
-    const svgType = location.type === 'facility' ? 'facility' : 'store';
-    const typeIcon = batterySvg[svgType].replace('width="32" height="44"', 'width="20" height="28"');
+    const typeIcon = batterySvg.store.replace('width="32" height="44"', 'width="20" height="28"');
 
     let content = `
         <div class="popup-header">
@@ -312,8 +297,7 @@ function createPopupContent(location) {
 
 // Create sidebar content for a location
 function createSidebarContent(location) {
-    const svgType = location.type === 'facility' ? 'facility' : 'store';
-    const typeIcon = batterySvg[svgType].replace('width="32" height="44"', 'width="36" height="50"');
+    const typeIcon = batterySvg.store.replace('width="32" height="44"', 'width="36" height="50"');
     const chain = detectChain(location.name);
     const chainName = chainNames[chain] || '';
 
@@ -539,7 +523,7 @@ function setupAutocomplete() {
                     </div>
                 `;
             } else {
-                const icon = match.locationType === 'store' ? '🟢' : '🔴';
+                const icon = '🟢';
                 return `
                     <div class="suggestion-item"
                          role="option"
