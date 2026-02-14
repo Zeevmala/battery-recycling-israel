@@ -372,17 +372,19 @@ body {
 }
 
 .leaflet-popup-content {
-    margin: 14px 18px;
-    line-height: 1.5;
+    margin: 20px 22px;
+    line-height: 1.6;
 }
 
 .leaflet-popup-content h3 {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 10px;
-    color: var(--accent-primary);
-    font-size: 16px;
+    margin-bottom: 14px;
+    color: #1a1a1a;
+    font-size: 18px;
+    font-weight: 700;
+    padding-left: 24px;
 }
 
 .popup-header {
@@ -400,9 +402,9 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    margin: 6px 0;
-    font-size: 13px;
-    color: var(--text-secondary);
+    margin: 10px 0;
+    font-size: 14px;
+    color: #333333;
 }
 
 .popup-row .icon {
@@ -416,43 +418,65 @@ body {
     font-weight: bold;
 }
 
+/* Leaflet popup close button — bigger tap area with circle background */
+.leaflet-popup-close-button {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 18px !important;
+    line-height: 32px !important;
+    text-align: center;
+    color: #888 !important;
+    background: #f0f0f0 !important;
+    border-radius: 50% !important;
+    top: 8px !important;
+    right: 8px !important;
+    padding: 0 !important;
+    transition: background 0.2s;
+}
+
+.leaflet-popup-close-button:hover {
+    background: #ddd !important;
+    color: #555 !important;
+}
+
 /* Navigation links in popup */
 .nav-links {
     display: flex;
     gap: 8px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-light);
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
 }
 
 .nav-btn {
     flex: 1;
-    padding: 8px 12px;
+    padding: 10px 12px;
     text-align: center;
     text-decoration: none;
-    border-radius: 5px;
-    font-size: 13px;
-    font-weight: bold;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    border: 2px solid #00796B;
+    background: transparent;
+    color: #00796B;
 }
 
-.nav-btn.google {
-    background-color: #4285f4;
+.nav-btn:hover {
+    background: #00796B;
     color: white;
 }
 
-.nav-btn.google:hover {
-    background-color: #3367d6;
-}
-
+.nav-btn.google,
 .nav-btn.waze {
-    background-color: #33ccff;
-    color: white;
+    background: transparent;
 }
 
+.nav-btn.google:hover,
 .nav-btn.waze:hover {
-    background-color: #00b3e6;
+    background: #00796B;
+    color: white;
 }
 
 /* Sidebar */
@@ -587,26 +611,32 @@ body {
     border-radius: 12px;
     font-size: 15px;
     font-weight: 600;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     cursor: pointer;
+    border: 2px solid #00796B;
+    background: transparent;
+    color: #00796B;
 }
 
 .sidebar-nav-btn:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: 0 6px 16px var(--shadow-medium);
-}
-
-.sidebar-nav-btn.google {
-    background: linear-gradient(135deg, #4285f4 0%, #356ac3 100%);
+    background: #00796B;
     color: white;
 }
 
+.sidebar-nav-btn.google,
 .sidebar-nav-btn.waze {
-    background: linear-gradient(135deg, #33ccff 0%, #00a3cc 100%);
+    background: transparent;
+}
+
+.sidebar-nav-btn.google:hover,
+.sidebar-nav-btn.waze:hover {
+    background: #00796B;
     color: white;
 }
 
@@ -836,17 +866,18 @@ body {
     }
 
     .leaflet-popup-content {
-        margin: 10px 14px;
+        margin: 14px 16px;
         font-size: 13px;
     }
 
     .leaflet-popup-content h3 {
-        font-size: 14px;
+        font-size: 16px;
+        padding-left: 20px;
     }
 
     .nav-btn {
-        padding: 6px 8px;
-        font-size: 12px;
+        padding: 8px 10px;
+        font-size: 13px;
     }
 
     .map-search-container .search-suggestions {
