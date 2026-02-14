@@ -376,8 +376,8 @@ function createPopupContent(location) {
 
     content += `
         <div class="nav-links">
-            <a href="${googleMapsUrl}" target="_blank" class="nav-btn google">🗺️ Google</a>
-            <a href="${wazeUrl}" target="_blank" class="nav-btn waze">🚗 Waze</a>
+            <a href="${googleMapsUrl}" target="_blank" class="nav-btn google">Google Maps</a>
+            <a href="${wazeUrl}" target="_blank" class="nav-btn waze">Waze</a>
         </div>
         <a href="${reportUrl}" target="_blank" class="report-link">דווח על בעיה</a>
     `;
@@ -387,7 +387,6 @@ function createPopupContent(location) {
 
 // Create sidebar content for a location
 function createSidebarContent(location) {
-    const typeIcon = markerSvg[location.type].replace('width="36" height="48"', 'width="36" height="50"');
     const chain = detectChain(location.name);
     const chainName = chainNames[chain] || '';
 
@@ -410,7 +409,6 @@ function createSidebarContent(location) {
 
     return `
         <div class="sidebar-header">
-            <div class="sidebar-icon">${typeIcon}</div>
             <div class="sidebar-title">
                 <h2>${escapeHtml(location.name)}</h2>
                 <span class="type-badge">${escapeHtml(typeNames[location.type])}${chainName ? ' - ' + escapeHtml(chainName) : ''}</span>
@@ -443,10 +441,10 @@ function createSidebarContent(location) {
 
         <div class="sidebar-nav">
             <a href="${googleMapsUrl}" target="_blank" class="sidebar-nav-btn google">
-                🗺️ נווט ב-Google
+                נווט ב-Google
             </a>
             <a href="${wazeUrl}" target="_blank" class="sidebar-nav-btn waze">
-                🚗 נווט ב-Waze
+                נווט ב-Waze
             </a>
         </div>
 
