@@ -336,12 +336,11 @@ function createPopupContent(location) {
             </h3>
         </div>
         <div class="popup-row">
-            <span class="icon">📍</span>
             <span>${escapeHtml(location.address)}</span>
         </div>
     `;
 
-    if (location.hours) {
+    if (location.hours && location.hours !== 'בדוק באתר') {
         content += `
         <div class="popup-row">
             <span class="icon">🕐</span>
@@ -417,14 +416,13 @@ function createSidebarContent(location) {
 
         <div class="sidebar-info">
             <div class="info-row">
-                <span class="info-icon">📍</span>
                 <span class="info-text">${escapeHtml(location.address)}</span>
             </div>
             <div class="info-row">
                 <span class="info-icon">🏙️</span>
                 <span class="info-text">${escapeHtml(location.city)}</span>
             </div>
-            ${location.hours ? `
+            ${location.hours && location.hours !== 'בדוק באתר' ? `
             <div class="info-row">
                 <span class="info-icon">🕐</span>
                 <span class="info-text">${escapeHtml(location.hours)}</span>
@@ -461,6 +459,7 @@ function showSidebar(location) {
 
     if (!sidebar || !sidebarContent) return;
 
+    map.closePopup();
     selectedLocationId = location.id;
     sidebarContent.innerHTML = createSidebarContent(location);
     sidebar.style.display = 'flex';
